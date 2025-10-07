@@ -41,6 +41,8 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
+.pyenv
+/venv/
 
 # temp directory
 .temp
@@ -54,3 +56,15 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# DowloadedData
+scripts/susprocessing/csvs
+scripts/susprocessing/downloads
+scripts/susprocessing/finalcsvs
+scripts/susprocessing/dbfs
+scripts/susprocessing/H*
+scripts/susprocessing/scripts/__pycache__
+
+# DataBase
+prisma/dbs
+prisma/migrations

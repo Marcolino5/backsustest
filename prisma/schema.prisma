@@ -1,59 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:.dev.db"
 }
 
-model Client {
-  cnes Int @id
-  cnpj Int @unique
-
-  hire_date DateTime @default(now())
-
-  state String
-
-  procedures Procedure[]
-  reports    Report[]
+model Hospital {
+  cnes   Int     @id
+  name   String
+  estado String
+  laudos Laudo[]
 }
 
-model Procedure {
-  aih Int @id
-
-  date_proc DateTime
-
-  val_h Int @default(0)
-  val_u Int @default(0)
-  val_p Int @default(0)
-
-  hospital_cnes Int
-  hospital      Client @relation(fields: [hospital_cnes], references: [cnes])
-
-  procedureTypeid Int
-  procedureType   ProcedureType @relation(fields: [procedureTypeid], references: [id])
-
-  @@index([hospital_cnes, procedureTypeid])
+model Laudo {
+  id                Int      @id @default(autoincrement())
+  hospital          Hospital @relation(fields: [cnes], references: [cnes])
+  ready             Boolean
+  cnes              Int
+  file_name         String   @unique
+  razao_social      String
+  nome_fantasia     String
+  cnpj              String
+  ivr_tunep         String
+  estado            String
+  cidade            String
+  numero_processo   String
+  data_inicio       String
+  data_fim          String
+  data_distribuicao DateTime
+  data_fim_correcao String
+  data_citacao      String
+  data_criacao      DateTime @default(now())
+  data_update       DateTime @default(now())
+  valor_final       String?
 }
 
-model ProcedureType {
-  id Int @id @default(autoincrement())
-
-  valTunep    Float
-  description String?
-
-  procedures Procedure[]
-}
-
-model Report {
-  id Int @id @default(autoincrement())
-
-  pdf          Bytes
-  data_created DateTime @default(now())
-
-  client_cnes Int
-  client      Client @relation(fields: [client_cnes], references: [cnes])
-
-  @@index([client_cnes])
+model User {
+  email String  @unique
+  senha String
+  admin Boolean @default(false)
 }
