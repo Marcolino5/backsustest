@@ -3,13 +3,13 @@ FROM node:22-bullseye-slim AS builder
 
 WORKDIR /app
 
-# Install system dependencies and C build tools
+# Install system dependencies and build tools
 RUN apt-get update && \
     apt-get install -y python3 python3-pip make git curl gcc \
                        texlive-latex-recommended texlive-xetex unzip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy Node dependencies for caching
+# Node dependencies caching
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
@@ -21,26 +21,27 @@ RUN mkdir -p /app/scripts/susprocessing/exes
 
 # ---------- Compile C executables ----------
 
-# 1. blast-dbf (Makefile)
-RUN git clone https://github.com/eaglebh/blast-dbf.git /tmp/blast-dbf && \
-    cd /tmp/blast-dbf && \
-    make && \
-    cp blast-dbf /app/scripts/susprocessing/exes/blast-dbf
+# 1. blast-dbf (get source files via curl)
+RUN curl -L -o /tmp/blast.c https://raw.githubusercontent.com/eaglebh/blast-dbf/master/blast.c && \
+    curl -L -o /tmp/blast.h https://raw.githubusercontent.com/eaglebh/blast-dbf/master/blast.h && \
+    curl -L -o /tmp/blast-dbf.c https://raw.githubusercontent.com/eaglebh/blast-dbf/master/blast-dbf.c && \
+    cd /tmp && \
+    gcc -o /app/scripts/susprocessing/exes/blast-dbf blast.c blast-dbf.c
 
-# 2. DBF2CSV (.c only)
-RUN git clone https://github.com/rmxvrelease/dbc2csv.git /tmp/dbc2csv && \
-    gcc /tmp/dbc2csv/DBF2CSV.c -o /app/scripts/susprocessing/exes/DBF2CSV
+# 2. DBF2CSV (get source via curl)
+RUN curl -L -o /tmp/DBF2CSV.c https://raw.githubusercontent.com/rmxvrelease/dbc2csv/master/DBF2CSV.c && \
+    gcc /tmp/DBF2CSV.c -o /app/scripts/susprocessing/exes/DBF2CSV
 
-# 3. unzip (system version)
+# 3. unzip (system binary)
 RUN ln -s /usr/bin/unzip /app/scripts/susprocessing/exes/unzip
 
-# Give execute permissions
+# Make executables runnable
 RUN chmod +x /app/scripts/susprocessing/exes/*
 
 # Python dependencies
 RUN pip3 install pandas numpy matplotlib
 
-# Generate Prisma client
+# Prisma client
 RUN npx prisma generate
 
 # Build TypeScript (NestJS)
@@ -51,13 +52,13 @@ FROM node:22-bullseye-slim
 
 WORKDIR /app
 
-# Install minimal runtime dependencies
+# Minimal runtime dependencies
 RUN apt-get update && \
     apt-get install -y python3 python3-pip make git curl gcc \
                        texlive-latex-recommended texlive-xetex unzip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy built artifacts from builder
+# Copy built artifacts
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
