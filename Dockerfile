@@ -11,9 +11,10 @@ RUN apt-get update && \
 
 # Copy Node dependency files for caching
 COPY package*.json ./
+RUN npm install --legacy-peer-deps
 
-# Install Node dependencies
-RUN npm install
+# Copy tsconfig.json explicitly for TypeScript build
+COPY tsconfig.json ./
 
 # Copy source code
 COPY . .
@@ -21,10 +22,10 @@ COPY . .
 # Install Python packages directly
 RUN pip3 install pandas numpy matplotlib
 
-# Generate Prisma client for TypeScript build
+# Generate Prisma client
 RUN npx prisma generate
 
-# Build TypeScript code (NestJS)
+# Build TypeScript (NestJS)
 RUN npm run build
 
 # ---------- STAGE 2: Runtime ----------
@@ -43,8 +44,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/tsconfig.json ./
 
-# Install Python packages in runtime image
+# Install Python packages in runtime
 RUN pip3 install pandas numpy matplotlib
 
 # Copy entrypoint and make it executable
