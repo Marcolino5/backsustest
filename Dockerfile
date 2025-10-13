@@ -13,11 +13,11 @@ RUN npm install
 # Copia o restante do código
 COPY . .
 
-# Migra database
-RUN npx prisma migrate dev
-
 # Executa as migrações e gera o Prisma Client
 RUN npx prisma generate
+
+# Migra database
+RUN npx prisma migrate deploy
 
 # Expõe a porta do app (troque se for diferente)
 EXPOSE 3001
