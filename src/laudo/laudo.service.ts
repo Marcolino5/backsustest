@@ -268,7 +268,9 @@ export class LaudoService {
       data = ProjUtils.DateToString(data);
     }
 
-    console.log("TESTANDO1");
+    const fs = require('fs');
+    const exesPath = '/app/scripts/susprocessing/exes';
+    console.log('Listing executables:', fs.readdirSync(exesPath));
 
     const [texContent, valorFinal] = getFinalDocument({
       razaoSocial: hospital.name,
