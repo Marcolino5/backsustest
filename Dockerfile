@@ -33,11 +33,11 @@ RUN npm run build
 
 # GET .EXES
 RUN mkdir -p /app/scripts/susprocessing/exes && \
-    curl -L -o /app/scripts/susprocessing/exes/unzip.exe \
+    curl -L -o /app/scripts/susprocessing/exes/unzip \
         https://github.com/Marcolino5/backsus/raw/master/scripts/susprocessing/exes/unzip && \
-    curl -L -o /app/scripts/susprocessing/exes/blast-dbf.exe \
+    curl -L -o /app/scripts/susprocessing/exes/blast-dbf \
         https://github.com/Marcolino5/backsus/raw/master/scripts/susprocessing/exes/blast-dbf && \
-    curl -L -o /app/scripts/susprocessing/exes/DBF2CSV.exe \
+    curl -L -o /app/scripts/susprocessing/exes/DBF2CSV \
         https://github.com/Marcolino5/backsus/raw/master/scripts/susprocessing/exes/DBF2CSV
 
 # ---------- STAGE 2: Runtime ----------
