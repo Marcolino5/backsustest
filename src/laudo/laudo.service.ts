@@ -143,7 +143,7 @@ export class LaudoService {
     // Executa o script Python para processar os dados
     exec(
       //TODO: conferir se a chamada está correta
-      `python3 scripts/susprocessing/scripts/pull.py BOTH ${hospital.estado} ${laudo.data_inicio} ${laudo.data_fim} ${hospital.cnes} ${laudo.ivr_tunep}`,
+      `python3 scripts/susprocessing/scripts/pull.py SIH ${hospital.estado} ${laudo.data_inicio} ${laudo.data_fim} ${hospital.cnes} ${laudo.ivr_tunep}`,
       (error, stdout, stderr) => {
         this.handleScriptConclusion(error, stdout, stderr, laudo, hospital);
       },
