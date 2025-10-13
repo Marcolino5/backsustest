@@ -13,13 +13,16 @@ RUN apt-get update && \
 COPY package*.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy tsconfig.json explicitly for TypeScript build
+# Copy tsconfig.json for TypeScript build
 COPY tsconfig.json ./
 
-# Copy source code
+# Copy source code (excluding scripts)
 COPY . .
 
-# Install Python packages directly
+# Explicitly copy scripts folder to /app/scripts
+COPY scripts /app/scripts
+
+# Install Python packages
 RUN pip3 install pandas numpy matplotlib
 
 # Generate Prisma client
@@ -45,6 +48,9 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/tsconfig.json ./
+
+# Copy scripts folder to runtime image
+COPY --from=builder /app/scripts /app/scripts
 
 # Install Python packages in runtime
 RUN pip3 install pandas numpy matplotlib
