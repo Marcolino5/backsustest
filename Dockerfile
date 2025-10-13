@@ -3,7 +3,7 @@ FROM node:22-bullseye-slim AS builder
 
 WORKDIR /app
 
-# Install system dependencies (including C build tools)
+# Install system dependencies and C build tools
 RUN apt-get update && \
     apt-get install -y python3 python3-pip make git curl gcc \
                        texlive-latex-recommended texlive-xetex unzip && \
@@ -31,10 +31,11 @@ RUN git clone https://github.com/eaglebh/blast-dbf.git /tmp/blast-dbf && \
 RUN git clone https://github.com/rmxvrelease/dbc2csv.git /tmp/dbc2csv && \
     gcc /tmp/dbc2csv/DBF2CSV.c -o /app/scripts/susprocessing/exes/DBF2CSV
 
-# ---------- Install unzip utility ----------
-RUN apt-get update && \
-    apt-get install -y unzip && \
-    ln -s /usr/bin/unzip /app/scripts/susprocessing/exes/unzip
+# 3. unzip (system version)
+RUN ln -s /usr/bin/unzip /app/scripts/susprocessing/exes/unzip
+
+# Give execute permissions
+RUN chmod +x /app/scripts/susprocessing/exes/*
 
 # Python dependencies
 RUN pip3 install pandas numpy matplotlib
@@ -50,10 +51,10 @@ FROM node:22-bullseye-slim
 
 WORKDIR /app
 
-# Minimal runtime dependencies
+# Install minimal runtime dependencies
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip make git curl \
-                       texlive-latex-recommended texlive-xetex unzip gcc && \
+    apt-get install -y python3 python3-pip make git curl gcc \
+                       texlive-latex-recommended texlive-xetex unzip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy built artifacts from builder
