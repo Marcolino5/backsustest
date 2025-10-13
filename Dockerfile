@@ -1,26 +1,27 @@
-# Usa uma imagem oficial do Node
+# Use official Node image
 FROM node:20
 
-# Define o diretório de trabalho
+# Set working directory
 WORKDIR /app
 
-# Copia os arquivos de dependências primeiro (para cache eficiente)
+# Copy dependency files first (for caching)
 COPY package*.json ./
 
-# Instala as dependências
+# Install dependencies
 RUN npm install
 
-# Copia o restante do código
+# Copy the rest of the source code
 COPY . .
 
-# Executa as migrações e gera o Prisma Client
-RUN npx prisma generate
+# Build TypeScript code (NestJS)
+RUN npm run build
 
-# Migra database
-RUN npx prisma migrate deploy
+# Expose app port
+EXPOSE 8080
 
-# Expõe a porta do app (troque se for diferente)
-EXPOSE 3001
+# Copy entrypoint script and make it executable inside image
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Comando padrão para iniciar a aplicação
-CMD ["npm", "start"]
+# Use entrypoint to run prisma generate, migrate, seed, then start app
+ENTRYPOINT ["/entrypoint.sh"]
