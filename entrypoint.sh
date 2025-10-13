@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
-set -e
+set -e  # exit if any command fails
 
-# Apply migrations first (DB must exist)
+echo "1️⃣ Deploying migrations..."
 npx prisma migrate deploy
 
-# Then generate Prisma client
+echo "2️⃣ Regenerating Prisma client after migrations..."
 npx prisma generate
 
-# Run seed script (compiled JS)
-npx ts-node src/auth/seed.ts || {
-  echo "Seed script failed, continuing..."
-}
+echo "3️⃣ Running seed script..."
+node ./dist/src/auth/seed.js || echo "Seed failed, continuing..."
 
-# Start app
+echo "4️⃣ Starting NestJS application..."
 npm run start:prod

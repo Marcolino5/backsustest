@@ -1,24 +1,30 @@
-# Use official Node image
+# 1️⃣ Base image
 FROM node:20
 
-# Set working directory
+# 2️⃣ Set working directory
 WORKDIR /app
 
-# Copy dependency files first (for caching)
+# 3️⃣ Copy dependency files first for caching
 COPY package*.json ./
 
-# Install dependencies
+# 4️⃣ Install dependencies (including devDependencies for TS build)
 RUN npm install
 
-# Copy the rest of the source code
+# 5️⃣ Copy the rest of the source code
 COPY . .
 
-# Expose app port
+# 6️⃣ Generate Prisma client for TypeScript build
+RUN npx prisma generate
+
+# 7️⃣ Build TypeScript code
+RUN npm run build
+
+# 8️⃣ Expose app port
 EXPOSE 8080
 
-# Copy entrypoint script and make it executable inside image
+# 9️⃣ Copy entrypoint script and make it executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Use entrypoint to run prisma generate, migrate, seed, then start app
+# 🔟 Use entrypoint to run migrations, seed, and start app
 ENTRYPOINT ["/entrypoint.sh"]
