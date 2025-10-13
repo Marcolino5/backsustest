@@ -8,7 +8,7 @@ npx prisma migrate deploy
 npx prisma generate
 
 # Run seed script (compiled JS)
-node ./dist/src/auth/seed.js || {
+npx ts-node src/auth/seed.ts || {
   echo "Seed script failed, continuing..."
 }
 
