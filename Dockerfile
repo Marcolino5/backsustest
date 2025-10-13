@@ -41,6 +41,7 @@ RUN apt-get update && \
     apt-get install -y python3 python3-pip make \
                        texlive-latex-recommended texlive-xetex git curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y unzip
 
 # Copy built artifacts from builder
 COPY --from=builder /app/node_modules ./node_modules

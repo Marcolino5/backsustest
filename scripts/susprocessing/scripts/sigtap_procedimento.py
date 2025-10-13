@@ -34,15 +34,18 @@ def arquivos_procedimentos_ftp(data: str):
 
     try:
         arquivos = ftp.nlst()
-        arquivos_filtrados = sorted([arq for arq in arquivos if arq.startswith(f'TabelaUnificada_{data}')])
-
+        print(arquivos)
+        print(data)
+        arquivos_filtrados = sorted([arq for arq in arquivos if arq.startswith(f'TabelaUnificada_202509')])
+        
         if not arquivos_filtrados:
             return None
+
 
         arquivo_mais_recente = arquivos_filtrados[-1]
 
         zip_path = get_path('dados', arquivo_mais_recente)
-
+ 
         with open(f'{zip_path}', 'wb') as file:
             ftp.retrbinary(f'RETR {arquivo_mais_recente}', file.write)
 
