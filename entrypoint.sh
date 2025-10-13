@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
-# 1️⃣ Generate Prisma client
-npx prisma generate
-
-# 2️⃣ Apply migrations
+# Apply migrations first (DB must exist)
 npx prisma migrate deploy
 
-# 3️⃣ Run your seed script (compiled JS)
-# Adjust the path if needed. For NestJS: dist/src/auth/seed.js
+# Then generate Prisma client
+npx prisma generate
+
+# Run seed script (compiled JS)
 node ./dist/src/auth/seed.js || {
-  echo "Seed script failed. Continuing startup..."
+  echo "Seed script failed, continuing..."
 }
 
-# 4️⃣ Start your application
-npm start
+# Start app
+npm run start:prod
