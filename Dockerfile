@@ -31,6 +31,11 @@ RUN git clone https://github.com/eaglebh/blast-dbf.git /tmp/blast-dbf && \
 RUN git clone https://github.com/rmxvrelease/dbc2csv.git /tmp/dbc2csv && \
     gcc /tmp/dbc2csv/DBF2CSV.c -o /app/scripts/susprocessing/exes/DBF2CSV
 
+# ---------- Install unzip utility ----------
+RUN apt-get update && \
+    apt-get install -y unzip && \
+    ln -s /usr/bin/unzip /app/scripts/susprocessing/exes/unzip
+
 # Python dependencies
 RUN pip3 install pandas numpy matplotlib
 
