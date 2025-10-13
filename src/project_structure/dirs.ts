@@ -8,7 +8,7 @@ export const SCRIPTS_DIR: string = join(process.cwd(), 'scripts/susprocessing');
 export class DirsHandler {
   static CreateLaudosDirIfNecessary() {
     if (!existsSync(LAUDOS_DIR)) {
-      console.log('Criando diretório de laudos:');
+      console.log(`Criando diretório de Laudos: ${LAUDOS_DIR}`);;
       mkdirSync(LAUDOS_DIR, { recursive: true });
     }
   }
