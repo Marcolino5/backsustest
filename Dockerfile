@@ -13,9 +13,6 @@ RUN npm install
 # Copy the rest of the source code
 COPY . .
 
-# Build TypeScript code (NestJS)
-RUN npm run build
-
 # Expose app port
 EXPOSE 8080
 
