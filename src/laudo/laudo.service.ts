@@ -271,6 +271,12 @@ export class LaudoService {
     const fs = require('fs');
     const exesPath = '/app/scripts/susprocessing/exes';
     console.log('Listing executables:', fs.readdirSync(exesPath));
+    const scriptsPath = '/app/scripts/susprocessing';
+    console.log('Listing scripts:', fs.readdirSync(scriptsPath));
+    const hospitalPath = `/app/scripts/susprocessing/H${hospital.cnes.toString()}${hospital.estado}`;
+    console.log('Listing hospital directory:', fs.readdirSync(hospitalPath));
+    const finalPath = `/app/scripts/susprocessing/H${hospital.cnes.toString()}${hospital.estado}/laudos`;
+    console.log('Listing final directory:', fs.readdirSync(finalPath));
 
     const [texContent, valorFinal] = getFinalDocument({
       razaoSocial: hospital.name,
