@@ -268,6 +268,8 @@ export class LaudoService {
       data = ProjUtils.DateToString(data);
     }
 
+    console.log("TESTANDO1");
+
     const [texContent, valorFinal] = getFinalDocument({
       razaoSocial: hospital.name,
       nomeFantasia: laudo.nome_fantasia,
@@ -279,6 +281,8 @@ export class LaudoService {
       dataDistribuicao: data,
       file_name: laudo.file_name,
     });
+
+    console.log("TESTANDO2");
 
     // Salva o arquivo .tex
     const texPath = join(LAUDOS_DIR, `${laudo.file_name}.tex`);
