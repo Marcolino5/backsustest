@@ -1,32 +1,26 @@
-# Base image
-FROM ubuntu:latest
+# ---------- STAGE 1: Builder ----------
+FROM node:22-bullseye-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies, Node 22, Python, LaTeX, make
+# Install system dependencies for build
 RUN apt-get update && \
-    apt-get install -y curl gnupg git python3 python3-pip make \
+    apt-get install -y python3 python3-pip make git curl \
                        texlive-latex-recommended texlive-xetex && \
-    curl -sL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Verify Node and npm
-RUN node -v && npm -v && python3 --version && pip3 --version
-
-# Copy dependency files first for caching
+# Copy Node dependencies files for caching
 COPY package*.json ./
 
 # Install Node dependencies
 RUN npm install
 
-# Copy the rest of the source code
+# Copy source code
 COPY . .
 
-# Install Python packages via pip
-# Add any other packages you need here
-RUN pip3 install pandas numpy matplotlib
+# Install Python packages
+COPY requirements.txt ./
+RUN pip3 install -r requirements.txt
 
 # Generate Prisma client for TypeScript build
 RUN npx prisma generate
@@ -34,7 +28,28 @@ RUN npx prisma generate
 # Build TypeScript code (NestJS)
 RUN npm run build
 
-# Copy entrypoint and make executable
+# ---------- STAGE 2: Runtime ----------
+FROM node:22-bullseye-slim
+
+WORKDIR /app
+
+# Install minimal runtime dependencies
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip make \
+                       texlive-latex-recommended texlive-xetex git curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy built artifacts from builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/requirements.txt ./
+
+# Install Python packages in runtime image
+RUN pip3 install -r requirements.txt
+
+# Copy entrypoint and make it executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
