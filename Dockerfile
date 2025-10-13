@@ -1,39 +1,45 @@
+# Base image
 FROM ubuntu:latest
 
-RUN apt-get update
-RUN apt-get install -y curl gnupg git
-RUN apt-get install -y python3 python3-pandas
-RUN apt-get install -y texlive-latex-recommended texlive-xetex
-RUN apt-get install -y make
-
-RUN curl -sL https://deb.nodesource.com/setup_22.x | bash -
-RUN apt-get install -y nodejs
-RUN node -v && npm -v
-
-# 2️⃣ Set working directory
+# Set working directory
 WORKDIR /app
 
-# 3️⃣ Copy dependency files first for caching
+# Install system dependencies, Node 22, Python, LaTeX, make
+RUN apt-get update && \
+    apt-get install -y curl gnupg git python3 python3-pip make \
+                       texlive-latex-recommended texlive-xetex && \
+    curl -sL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Verify Node and npm
+RUN node -v && npm -v && python3 --version && pip3 --version
+
+# Copy dependency files first for caching
 COPY package*.json ./
 
-# 4️⃣ Install dependencies (including devDependencies for TS build)
+# Install Node dependencies
 RUN npm install
 
-# 5️⃣ Copy the rest of the source code
+# Copy the rest of the source code
 COPY . .
 
-# 6️⃣ Generate Prisma client for TypeScript build
+# Install Python packages via pip
+# Add any other packages you need here
+RUN pip3 install pandas numpy matplotlib
+
+# Generate Prisma client for TypeScript build
 RUN npx prisma generate
 
-# 7️⃣ Build TypeScript code
+# Build TypeScript code (NestJS)
 RUN npm run build
 
-# 8️⃣ Expose app port
-EXPOSE 8080
-
-# 9️⃣ Copy entrypoint script and make it executable
+# Copy entrypoint and make executable
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# 🔟 Use entrypoint to run migrations, seed, and start app
+# Expose NestJS port
+EXPOSE 8080
+
+# Entrypoint runs migrations, seed, Python scripts, and starts app
 ENTRYPOINT ["/entrypoint.sh"]
