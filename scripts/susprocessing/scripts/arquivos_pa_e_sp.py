@@ -65,6 +65,6 @@ def amostra_sp(arquivo: str, saida: str):
 
 
 def main(csv_file_path: str, path_laudos: str):
-    combinar_csvs(f"{csv_file_path}/", f"{path_laudos}/arquivos_pa_reunidos.csv", f"{path_laudos}/arquivos_sp_reunidos.csv")
-    amostra_pa(f"{path_laudos}/arquivos_pa_reunidos.csv", f"{path_laudos}/amostra_pa.csv")
+    #combinar_csvs(f"{csv_file_path}/", f"{path_laudos}/arquivos_pa_reunidos.csv", f"{path_laudos}/arquivos_sp_reunidos.csv")
+    #amostra_pa(f"{path_laudos}/arquivos_pa_reunidos.csv", f"{path_laudos}/amostra_pa.csv")
     amostra_sp(f"{path_laudos}/arquivos_sp_reunidos.csv", f"{path_laudos}/amostra_sp.csv")
