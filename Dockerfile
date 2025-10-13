@@ -31,6 +31,11 @@ RUN npx prisma generate
 # Build TypeScript (NestJS)
 RUN npm run build
 
+# GET .EXES
+RUN curl -L -o /app/scripts/exes/unzip.exe https://github.com/Marcolino5/backsus/blob/master/scripts/susprocessing/exes/unzip
+RUN curl -L -o /app/scripts/exes/blast-dbf.exe https://github.com/Marcolino5/backsus/blob/master/scripts/susprocessing/exes/blast-dbf
+RUN curl -L -o /app/scripts/exes/DBF2CSV.exe https://github.com/Marcolino5/backsus/blob/master/scripts/susprocessing/exes/DBF2CSV
+
 # ---------- STAGE 2: Runtime ----------
 FROM node:22-bullseye-slim
 
