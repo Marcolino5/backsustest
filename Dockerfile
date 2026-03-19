@@ -3,11 +3,16 @@ FROM node:22-bullseye-slim AS builder
 
 WORKDIR /app
 
-# Install system dependencies and build tools
+# Install system dependencies and build tools + R
 RUN apt-get update && \
     apt-get install -y python3 python3-pip make git curl gcc \
-                       texlive-latex-recommended texlive-xetex unzip && \
+                       texlive-latex-recommended texlive-xetex unzip \
+                       r-base r-base-dev \
+                       libbz2-dev zlib1g-dev liblzma-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install read.dbc (R)
+RUN Rscript -e "install.packages('read.dbc', repos='https://cloud.r-project.org')"
 
 # Node dependencies caching
 COPY package*.json ./
@@ -52,11 +57,16 @@ FROM node:22-bullseye-slim
 
 WORKDIR /app
 
-# Minimal runtime dependencies
+# Minimal runtime dependencies + R
 RUN apt-get update && \
     apt-get install -y python3 python3-pip make git curl gcc \
-                       texlive-latex-recommended texlive-xetex unzip && \
+                       texlive-latex-recommended texlive-xetex unzip \
+                       r-base \
+                       libbz2-dev zlib1g-dev liblzma-dev && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install read.dbc (R)
+RUN Rscript -e "install.packages('read.dbc', repos='https://cloud.r-project.org')"
 
 # Copy built artifacts
 COPY --from=builder /app/node_modules ./node_modules
