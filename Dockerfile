@@ -1,6 +1,6 @@
 # ---------- STAGE 1: Builder ----------
 FROM node:22-bullseye-slim AS builder
-
+ 
 WORKDIR /app
 
 # Install system dependencies and build tools + R
